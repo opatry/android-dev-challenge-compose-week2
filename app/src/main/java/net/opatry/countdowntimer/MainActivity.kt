@@ -1,5 +1,5 @@
 /*
- * Copyright (c) $YEAR Olivier Patry
+ * Copyright (c) 2021 Olivier Patry
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -19,3 +19,33 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package net.opatry.countdowntimer
+
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import net.opatry.countdowntimer.ui.theme.MyTheme
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MyTheme {
+                MyApp()
+            }
+        }
+    }
+}
+
+// Start building your app here!
+@Composable
+fun MyApp() {
+    Surface(color = MaterialTheme.colors.background) {
+        Text(text = "Ready... Set... GO!")
+    }
+}

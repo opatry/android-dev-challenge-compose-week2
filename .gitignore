@@ -33,4 +33,13 @@ proguard-project.txt
 
 # Android Studio/IDEA
 *.iml
-.idea
+.idea/.name
+.idea/assetWizardSettings.xml
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/inspectionProfiles/ktlint.xml
