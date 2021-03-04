@@ -28,14 +28,14 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = RazzleDazzleRose,
-    primaryVariant = RazzleDazzleRose,
+    primary = RussianViolet,
+    primaryVariant = RussianViolet,
     secondary = MaximumYellow
 )
 
 private val LightColorPalette = lightColors(
-    primary = RussianViolet,
-    primaryVariant = RussianViolet,
+    primary = RazzleDazzleRose,
+    primaryVariant = RazzleDazzleRose,
     secondary = MaximumYellow
 
         /* Other default colors to override
