@@ -107,6 +107,7 @@ class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatc
                 }
             }.also {
                 _state.value = TimerState(timer.duration, timer)
+                delay(300)
                 it.start()
             }
         }
