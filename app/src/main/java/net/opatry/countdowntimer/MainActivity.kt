@@ -152,7 +152,7 @@ fun CountDownTimerLayout(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             TimerLabel(hours, minutes, seconds)
-            TimerCircle(hours / 24f, minutes / 60f, seconds / 60f, tickInterval, onFABClicked)
+            TimerCircle(hours / 12f, minutes / 60f, seconds / 60f, tickInterval, onFABClicked)
             TimerControls(onClose = { /* TODO */ }, onDelete = { /* TODO */ })
         }
     }
