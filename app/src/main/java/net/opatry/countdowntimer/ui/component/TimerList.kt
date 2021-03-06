@@ -110,7 +110,6 @@ fun TimerListItem(timer: Timer, onTimerClicked: (Timer) -> Unit) {
 
     Text(
         buildAnnotatedString {
-            // FIXME shouldn't come from string resource for proper localization?
             if (timer.name != null) {
                 append(timer.name)
             } else {

@@ -65,7 +65,6 @@ fun TimerCircle(
     tickInterval: Duration,
     onFABClicked: () -> Unit
 ) {
-    // TODO animate card size when reaching 0 to make it wrapping the FAB
     Card(
         Modifier
             .padding(16.dp)

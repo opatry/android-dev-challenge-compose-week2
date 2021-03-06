@@ -44,8 +44,6 @@ fun TimerLabel(hours: Int, minutes: Int, seconds: Int) {
     Text(
         // FIXME text "moves" because it's not a monospaced font, how could we make each "bucket" of 2-digits stable in size?
         buildAnnotatedString {
-            // TODO padded string 2 digits, pad number with alpha
-            // TODO transition anim alpha of pad number when changing from 0 to N or N to 0
             withStyle(style = SpanStyle(color = DurationUnit.HOURS.color)) {
                 append(hours.pad0())
             }

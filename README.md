@@ -4,23 +4,28 @@
 
 ## :scroll: Description
 
-TODO
+This app lists timers to launch at will for different needs.
+Each unit has its own indicator (for hours, minutes and seconds).
 
 ## :bulb: Motivation and Context
 
-TODO
+The main idea was to bring a really visual way to represent time, using distinct progress for each units with its own nested color circles.
+It was tough to deal with time arithmetic and smooth animation each seconds.
+
+I'm kind of satisfied by final visual even if not perfect.
+I learn a lot with this challenge #2 (Animation, backdrop (incl. conceal/reveal using `rememberCoroutineScope`), time arithmetic, canvas composable, custom font, `LazyColumn.stickyHeader`).
 
 ## :camera_flash: Screenshots
 
-## 🌞 Light Mode
-List | Details | Tablet
---- | --- | --- |
-<img src="/results/screenshot_1.png" width="260"> | <img src="/results/screenshot_2.png" width="260"> | <img src="/results/screenshot_3.png" width="520">
+### 🌞 Light Mode
+Active timer | Timers
+--- | --- |
+<img src="results/screenshot_1.png" width="260"> | <img src="results/screenshot_2.png" width="260">
 
-## 🌚 Dark Mode
-List | Details | Tablet
---- | --- | --- |
-<img src="/results/screenshot_1_dark.png" width="260"> | <img src="/results/screenshot_2_dark.png" width="260"> | <img src="/results/screenshot_3_dark.png" width="520">
+### 🌚 Dark Mode
+Active timer | Timers
+--- | --- |
+<img src="results/screenshot_1_dark.png" width="260"> | <img src="results/screenshot_2_dark.png" width="260">
 
 ## License
 ```

@@ -85,8 +85,6 @@ class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatc
 
     fun start(timer: Timer) {
         viewModelScope.launch(mainDispatcher) {
-            // TODO review poor state & timers modeling
-            // keep list of timers up to date keeping last used first
             _timers.value = buildList {
                 add(timer)
                 val timers = _timers.value?.filterNot { it == timer }
