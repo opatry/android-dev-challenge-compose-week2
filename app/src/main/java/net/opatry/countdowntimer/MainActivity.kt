@@ -43,16 +43,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import net.opatry.countdowntimer.ui.component.TimerCircle
 import net.opatry.countdowntimer.ui.component.TimerControls
 import net.opatry.countdowntimer.ui.component.TimerLabel
 import net.opatry.countdowntimer.ui.component.TimerList
 import net.opatry.countdowntimer.ui.theme.MyTheme
-import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 class MainActivity : AppCompatActivity() {
     @ExperimentalTime
@@ -90,6 +89,7 @@ fun CountDownTimerDispatcher() {
     val viewModel = viewModel<CounterViewModel>()
     val timers by viewModel.timers.observeAsState(listOf())
     val state by viewModel.state.observeAsState(null)
+    val tickInterval by viewModel.tickInterval.observeAsState(0.seconds)
     val coroutineScope = rememberCoroutineScope()
 
     val scaffoldState = rememberBackdropScaffoldState(if (state == null) BackdropValue.Revealed else BackdropValue.Concealed)
@@ -114,6 +114,7 @@ fun CountDownTimerDispatcher() {
             state?.let { uiState ->
                 CountDownTimerLayout(
                     uiState.remaining,
+                    tickInterval,
                     onFABClicked = {
                         if (uiState.remaining.isPositive()) {
                             coroutineScope.launch {
@@ -139,31 +140,20 @@ fun CountDownTimerDispatcher() {
 @ExperimentalFoundationApi
 fun CountDownTimerLayout(
     remainingDuration: Duration,
+    tickInterval: Duration,
     onFABClicked: () -> Unit
 ) {
-    val hours = (remainingDuration.inHours % 24).coerceAtLeast(.0)
-    val minutes = (remainingDuration.inMinutes % 60).coerceAtLeast(.0)
-    val seconds = (remainingDuration.inSeconds % 60).coerceAtLeast(.0)
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(.8f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        // FIXME values rounding is incorrect
-        //  1. when switching from 35min 30sec to 35min 29sec, it displays 34min 29sec
-        //  2. when seconds is almost 0 but not yet, digit changes to 0 before the progress reach 12 O'clock
-        //      (especially visible for last second)
-        val hoursI = hours.roundToInt()
-        val minutesI = minutes.roundToInt()
-        val secondsI = seconds.roundToInt()
-        TimerLabel(hoursI, minutesI, secondsI)
-        val hoursP = if (hoursI == 0) 0f else (hours / 24).toFloat()
-        val minutesP = if (minutesI == 0) 0f else (minutes / 60).toFloat()
-        val secondsP = if (secondsI == 0) 0f else (seconds / 60).toFloat()
-        TimerCircle(hoursP, minutesP, secondsP, onFABClicked)
-        TimerControls(onClose = { /* TODO */ }, onDelete = { /* TODO */ })
+    remainingDuration.coerceAtLeast(0.seconds).toComponents { hours, minutes, seconds, _ ->
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(.8f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            TimerLabel(hours, minutes, seconds)
+            TimerCircle(hours / 24f, minutes / 60f, seconds / 60f, tickInterval, onFABClicked)
+            TimerControls(onClose = { /* TODO */ }, onDelete = { /* TODO */ })
+        }
     }
 }

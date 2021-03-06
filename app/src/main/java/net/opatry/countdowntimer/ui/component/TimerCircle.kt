@@ -21,7 +21,9 @@
  */
 package net.opatry.countdowntimer.ui.component
 
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,12 +52,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import net.opatry.countdowntimer.R
+import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 
 @Composable
 @ExperimentalTime
-fun TimerCircle(hoursProgress: Float, minutesProgress: Float, secondsProgress: Float, onFABClicked: () -> Unit) {
+fun TimerCircle(
+    hoursProgress: Float,
+    minutesProgress: Float,
+    secondsProgress: Float,
+    tickInterval: Duration,
+    onFABClicked: () -> Unit
+) {
     // TODO animate card size when reaching 0 to make it wrapping the FAB
     Card(
         Modifier
@@ -72,7 +81,8 @@ fun TimerCircle(hoursProgress: Float, minutesProgress: Float, secondsProgress: F
                     .fillMaxSize()
                     .padding(12.dp),
                 color = DurationUnit.SECONDS.color,
-                strokeWidth = 8.dp
+                strokeWidth = 8.dp,
+                animationDuration = tickInterval
             )
         }
         if (minutesProgress > 0 || hoursProgress > 0) {
@@ -82,7 +92,8 @@ fun TimerCircle(hoursProgress: Float, minutesProgress: Float, secondsProgress: F
                     .fillMaxSize()
                     .padding(32.dp),
                 color = DurationUnit.MINUTES.color,
-                strokeWidth = 8.dp
+                strokeWidth = 8.dp,
+                animationDuration = tickInterval
             )
         }
         if (hoursProgress > 0) {
@@ -92,7 +103,8 @@ fun TimerCircle(hoursProgress: Float, minutesProgress: Float, secondsProgress: F
                     .fillMaxSize()
                     .padding(56.dp),
                 color = DurationUnit.HOURS.color,
-                strokeWidth = 8.dp
+                strokeWidth = 8.dp,
+                animationDuration = tickInterval
             )
         }
         FloatingActionButton(
@@ -118,11 +130,15 @@ fun CountDownTimerProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.primary,
     strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth,
-    backgroundColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .05f)
+    animationDuration: Duration,
+    backgroundColor: Color = MaterialTheme.colors.onSurface.copy(alpha = .05f)
 ) {
     val animatedProgress = animateFloatAsState(
         targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+        animationSpec = tween(
+            durationMillis = animationDuration.toLongMilliseconds().toInt(),
+            easing = LinearEasing
+        )
     ).value
     val stroke = with(LocalDensity.current) {
         Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)

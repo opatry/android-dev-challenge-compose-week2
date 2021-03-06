@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToLong
 import kotlin.time.Duration
@@ -68,6 +69,12 @@ class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatc
 
     private var countDownTimer: CountDownTimer? = null
 
+    private val tickIntervalMs
+        get() = _tickInterval.value?.toLongMilliseconds() ?: 0L
+    private val _tickInterval = MutableLiveData(1.seconds)
+    val tickInterval: LiveData<Duration>
+        get() = _tickInterval
+
     fun stop() {
         viewModelScope.launch(mainDispatcher) {
             _state.value = null
@@ -89,7 +96,7 @@ class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatc
             }.distinct()
 
             countDownTimer?.cancel()
-            countDownTimer = object : CountDownTimer(timer.duration.inMilliseconds.roundToLong(), 16L) {
+            countDownTimer = object : CountDownTimer(timer.duration.inMilliseconds.roundToLong(), tickIntervalMs) {
                 override fun onTick(millisUntilFinished: Long) {
                     val state = _state.value ?: return
                     _state.postValue(state.copy(remaining = millisUntilFinished.milliseconds))

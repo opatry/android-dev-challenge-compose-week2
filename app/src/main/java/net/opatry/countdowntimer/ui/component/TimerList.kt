@@ -106,18 +106,27 @@ fun ActiveTimer(timerName: String) {
 @Composable
 @ExperimentalTime
 fun TimerListItem(timer: Timer, onTimerClicked: (Timer) -> Unit) {
+    fun Int.pad0(length: Int = 2) = toString().padStart(length, '0')
+
     Text(
         buildAnnotatedString {
             // FIXME shouldn't come from string resource for proper localization?
             if (timer.name != null) {
                 append(timer.name)
             } else {
-                withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
+                withStyle(
+                    style = SpanStyle(
+                        fontStyle = FontStyle.Italic,
+                        color = MaterialTheme.colors.onBackground.copy(alpha = .5f)
+                    )
+                ) {
                     append(stringResource(R.string.timer_unnamed))
                 }
             }
             withStyle(style = SpanStyle(fontSize = 10.sp)) {
-                append(" (${timer.duration})")
+                timer.duration.toComponents { hours, minutes, seconds, _ ->
+                    append(" (${hours.pad0()}:${minutes.pad0()}:${seconds.pad0()})")
+                }
             }
         },
         Modifier
