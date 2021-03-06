@@ -21,6 +21,7 @@
  */
 package net.opatry.countdowntimer
 
+import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,9 +29,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.roundToLong
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.hours
+import kotlin.time.milliseconds
 import kotlin.time.minutes
 import kotlin.time.seconds
 
@@ -38,18 +41,13 @@ import kotlin.time.seconds
 data class Timer(val duration: Duration, val name: String? = null)
 
 @ExperimentalTime
-sealed class TimerState {
-    data class Reset(val duration: Duration?) : TimerState()
-    data class Running(val remaining: Duration, val timer: Timer) : TimerState()
-    data class Paused(val remaining: Duration, val timer: Timer) : TimerState() // TOOO __start__ blinking
-    data class Done(val overdue: Duration, val timer: Timer) : TimerState() // TODO __start__ sound
-}
+data class TimerState(val remaining: Duration, val timer: Timer)
 
 @ExperimentalStdlibApi
 @ExperimentalTime
 class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main) : ViewModel() {
-    private val _state = MutableLiveData<TimerState>(TimerState.Reset(null))
-    val state: LiveData<TimerState>
+    private val _state = MutableLiveData<TimerState?>()
+    val state: LiveData<TimerState?>
         get() = _state
 
     private val _timers = MutableLiveData(
@@ -68,35 +66,19 @@ class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatc
     val timers: LiveData<List<Timer>>
         get() = _timers
 
-    fun pause() {
-        val state = _state.value as? TimerState.Running ?: return
-        // TODO pause countdown scheduler
-        viewModelScope.launch(mainDispatcher) {
-            _state.value = TimerState.Paused(state.remaining, state.timer)
-        }
-    }
+    private var countDownTimer: CountDownTimer? = null
 
-    fun resume() {
-        val state = _state.value as? TimerState.Paused ?: return
-        // TODO restart countdown scheduler
+    fun stop() {
         viewModelScope.launch(mainDispatcher) {
-            _state.value = TimerState.Running(state.remaining, state.timer)
-        }
-    }
-
-    fun reset() {
-        if (_state.value !is TimerState.Reset) {
-            // TODO stop countdown scheduler
-        }
-        viewModelScope.launch(mainDispatcher) {
-            _state.value = TimerState.Reset(null)
+            _state.value = null
+            countDownTimer?.cancel()
+            countDownTimer = null
         }
     }
 
     fun start(timer: Timer) {
         viewModelScope.launch(mainDispatcher) {
             // TODO review poor state & timers modeling
-
             // keep list of timers up to date keeping last used first
             _timers.value = buildList {
                 add(timer)
@@ -104,8 +86,28 @@ class CounterViewModel(private val mainDispatcher: CoroutineDispatcher = Dispatc
                 if (!timers.isNullOrEmpty()) {
                     addAll(timers)
                 }
+            }.distinct()
+
+            countDownTimer?.cancel()
+            countDownTimer = object : CountDownTimer(timer.duration.inMilliseconds.roundToLong(), 16L) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val state = _state.value ?: return
+                    _state.postValue(state.copy(remaining = millisUntilFinished.milliseconds))
+                }
+
+                override fun onFinish() {
+                    _state.postValue(null)
+                }
+            }.also {
+                _state.value = TimerState(timer.duration, timer)
+                it.start()
             }
-            _state.value = TimerState.Running(timer.duration, timer)
         }
+    }
+
+    override fun onCleared() {
+        countDownTimer?.cancel()
+        countDownTimer = null
+        super.onCleared()
     }
 }

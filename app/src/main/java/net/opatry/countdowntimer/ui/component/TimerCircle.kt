@@ -35,6 +35,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material.icons.twotone.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -98,10 +99,13 @@ fun TimerCircle(hoursProgress: Float, minutesProgress: Float, secondsProgress: F
             onClick = onFABClicked,
             Modifier.wrapContentSize(Alignment.Center)
         ) {
+            val (icon, labelRes) = when {
+                secondsProgress > 0 || secondsProgress > 0 || secondsProgress > 0 -> Icons.TwoTone.Stop to R.string.timer_stop
+                else -> Icons.TwoTone.PlayArrow to R.string.timer_start
+            }
             Icon(
-                // if (secondsProgress > 0 || secondsProgress > 0 || secondsProgress > 0) Icons.TwoTone.Pause else Icons.TwoTone.Check,
-                Icons.TwoTone.Stop,
-                stringResource(R.string.timer_start)
+                icon,
+                stringResource(labelRes)
             )
         }
     }

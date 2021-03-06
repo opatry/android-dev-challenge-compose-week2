@@ -64,6 +64,7 @@ fun TimerLabel(hours: Int, minutes: Int, seconds: Int) {
         },
         Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
-        style = typography.h3
+        style = typography.h3,
+        fontFamily = ReemKufi
     )
 }

@@ -23,7 +23,9 @@
 <resources>
     <string name="app_name">Countdown Timer</string>
     <string name="timer_start">Start</string>
+    <string name="timer_stop">Stop</string>
     <string name="timer_unnamed">Unnamed</string>
     <string name="timer_close">Close</string>
     <string name="timer_delete">Delete</string>
+    <string name="timer_select_a_timer">Select a timer below</string>
 </resources>

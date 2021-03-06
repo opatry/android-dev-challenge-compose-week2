@@ -62,13 +62,26 @@ val DurationUnit.color: Color
 @ExperimentalTime
 @ExperimentalFoundationApi
 fun TimerList(activeTimer: Timer?, timers: List<Timer>, onTimerClicked: (Timer) -> Unit) {
-    // TODO no timer selected
-    if (activeTimer == null) return
-
     val otherTimers = timers.filterNot { it == activeTimer }
+
     LazyColumn {
+        // FIXME when header goes sticky, it's not opaque and list is displayed below
         stickyHeader {
-            ActiveTimer(activeTimer.name ?: stringResource(R.string.timer_unnamed))
+            if (activeTimer != null) {
+                ActiveTimer(activeTimer.name ?: stringResource(R.string.timer_unnamed))
+            } else {
+                // TODO distinguish hint from selected timer but share common "title" style
+                Text(
+                    stringResource(R.string.timer_select_a_timer),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    style = typography.h5,
+                    textAlign = TextAlign.Center,
+                    fontStyle = FontStyle.Italic,
+                    color = MaterialTheme.colors.onBackground
+                )
+            }
         }
         items(otherTimers) { timer ->
             TimerListItem(timer, onTimerClicked)
